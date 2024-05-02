@@ -14,6 +14,7 @@ use PHPHtmlParser\Dom;
 class ParseAdStatsService
 {
     private $limit;
+
     public function __construct(
         private Cabinet $cabinet,
     )
@@ -234,10 +235,6 @@ class ParseAdStatsService
                 $this->limit -= 1;
                 TgParseAdCreated::dispatch($ad);
             } elseif ($ad) {
-                if ($ad->id === 43) {
-                    echo 1  ;
-                }
-
                 $views = $tgAd["views"];
                 $ad->update([
                     "title"       => $tgAd["title"],
