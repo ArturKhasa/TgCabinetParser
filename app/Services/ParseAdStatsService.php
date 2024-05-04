@@ -38,7 +38,7 @@ class ParseAdStatsService
 
     }
 
-    private function parseTgAdStatByMinutes($ad)
+    private function parseTgAdStatByMinutesOld($ad)
     {
         $cpm = $ad->cpm;
         $tgAdStat = $this->cabinet->tgStatsByMinutes($ad->external_ad_id);
@@ -87,6 +87,40 @@ class ParseAdStatsService
                 $stat
             );
 
+        }
+    }
+
+    private function parseTgAdStatByMinutes($ad)
+    {
+        $cpm = $ad->cpm;
+        $tgAdStat = $this->cabinet->tgStatsByMinutes($ad->external_ad_id);
+        preg_match('#chart_count_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $joins);
+        preg_match('#chart_budget_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $spent);
+
+        $data = [];
+
+        if (isset($joins[1])) {
+            $stat = json_decode($joins[1], true);
+            $statSpent = json_decode($spent[1], true);
+
+            $i = 0;
+            foreach ($stat["columns"][0] as $timestamp) {
+                if (is_int($timestamp)) {
+                    $s_spent = $statSpent["columns"][1][$i];
+                    $date = Carbon::parse($timestamp / 1000)->format("Y-m-d");
+                    $adStat = $ad->statMinutes()->updateOrCreate(
+                        ["date" => $date],
+                        [
+                            "views"  => $stat["columns"][1][$i] ?? 0,
+                            "clicks" => $stat["columns"][2][$i] ?? 0,
+                            "joins"  => $stat["columns"][3][$i] ?? 0,
+                            "spent"  => $s_spent > 0 ? (float)$s_spent / 1000000 : 0,
+                            "cpm"    => $cpm
+                        ]
+                    );
+                }
+                $i++;
+            }
         }
     }
 
