@@ -47,9 +47,9 @@ class Cabinet extends Model
 //        return $this->hasMany(Company::class);
 //    }
 //
-//    public function defaultCompany(){
-//        return $this->hasOne(Company::class)->where("system", true);
-//    }
+    public function defaultCompany(){
+        return $this->hasOne(Company::class)->where("is_default", true);
+    }
 
     public function ads(){
         return $this->hasMany(Ad::class);
