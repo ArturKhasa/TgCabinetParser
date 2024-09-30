@@ -27,9 +27,10 @@ class ParseAdStatsService
         $cabinets = Cabinet::query()->whereIn('id', $cabinetIds)->get();
 
         foreach ($cabinets as $cabinet) {
-            if ($cabinet->space->hasActivePlan() || $cabinet->is_clickise) {
-                TgParseAdStatsByCabinet::dispatch($cabinet, $cabinet->is_new);
-            }
+//            if ($cabinet->space->hasActivePlan() || $cabinet->is_clickise) {
+//                TgParseAdStatsByCabinet::dispatch($cabinet, $cabinet->is_new);
+//            }
+            TgParseAdStatsByCabinet::dispatch($cabinet, $cabinet->is_new);
         }
     }
 
