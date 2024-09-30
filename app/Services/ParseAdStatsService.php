@@ -19,7 +19,7 @@ class ParseAdStatsService
         private Cabinet $cabinet,
     )
     {
-        $this->limit = $this->cabinet->space->getAdLimitBalance();
+//        $this->limit = $this->cabinet->space->getAdLimitBalance();
     }
 
     public static function parse(array $cabinetIds)
@@ -110,7 +110,7 @@ class ParseAdStatsService
                     $s_spent = $statSpent["columns"][1][$i];
                     $date = Carbon::parse($timestamp / 1000)->format("Y-m-d");
                     $adStat = $ad->statMinutes()->updateOrCreate(
-                        ["date" => $date],
+                        ["datetime" => $date],
                         [
                             "views"  => $stat["columns"][1][$i] ?? 0,
                             "clicks" => $stat["columns"][2][$i] ?? 0,
@@ -250,7 +250,7 @@ class ParseAdStatsService
                 $promoteUrl = str_replace("&amp;", "&", $tgAd["promote_url"]);
             if (isset($tgAd["tme_path"]) && strlen($tgAd["tme_path"]) > 0)
                 $promoteUrl = "t.me/" . $tgAd["tme_path"];
-            if (!$ad && $this->limit > 0) {
+            if (!$ad) {
                 $ad = $this->cabinet->ads()->create([
                     "external_ad_id" => $tgAd["ad_id"],
                     "title"          => $tgAd["title"],

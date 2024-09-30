@@ -12,7 +12,7 @@ class WebhookHandleController extends Controller
     public function parseAdStats(Request $request): JsonResponse
     {
 //        ParseAdStatsService::parse($request->get('cabinetIds'));
-        $cabinets = Cabinet::query()->get();
+        $cabinets = Cabinet::query()->where('id', 37)->get();
         foreach ($cabinets as $cabinet) {
             $service = new ParseAdStatsService($cabinet);
             $service->handle();

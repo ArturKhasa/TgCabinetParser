@@ -8,6 +8,7 @@ use App\Services\Traits\TelegramProvider;
 use App\Services\Traits\TelegramService;
 use App\Services\Traits\WithProxy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -47,7 +48,8 @@ class Cabinet extends Model
 //        return $this->hasMany(Company::class);
 //    }
 //
-    public function defaultCompany(){
+    public function defaultCompany(): HasOne
+    {
         return $this->hasOne(Company::class)->where("is_default", true);
     }
 
