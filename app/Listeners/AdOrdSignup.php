@@ -10,7 +10,6 @@ class AdOrdSignup
 {
     public function __construct()
     {
-        Log::info('ord construct');
     }
 
     /**
@@ -18,7 +17,6 @@ class AdOrdSignup
      */
     public function handle(TgParseAdUpdated $event): void
     {
-        Log::info('ord handle');
         $ad = $event->ad;
         $cabinet = $ad->cabinet;
         if($cabinet->ord_contract_id && !$ad->ordCreative)
