@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Channel extends Model
 {
-    use HasFactory;
 
     protected $fillable=[
         'tg_id',
@@ -15,5 +14,6 @@ class Channel extends Model
         'title',
         'title',
         'username',
+        'phone_id'
     ];
 }
