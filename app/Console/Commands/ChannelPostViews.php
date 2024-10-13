@@ -79,6 +79,7 @@ class ChannelPostViews extends Command
                 $finishTimeRequest = time();
                 $this->info("channel " . ($channel->username) . ", phone " . $telegramPhone->phone);
                 $this->info("request " . ($finishTimeRequest - $startTimeRequest) . " seconds");
+                $this->info('result -', $result);
             }catch(\Exception $e) {
                 $this->info("Exception 1");
                 $this->info(print_r($result, true));
