@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command(ParseAds::class)->everyFiveMinutes();
-        $schedule->job(new TelegramParsePosts)->hourly();
+//        $schedule->job(new TelegramParsePosts)->hourly();
     }
 
     /**
