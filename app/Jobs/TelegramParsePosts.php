@@ -48,7 +48,7 @@ class TelegramParsePosts implements ShouldQueue
         $dateTime = $this->roundTime(Carbon::now(), 60);
 
         $http = Http::withOptions([
-            'proxy'     =>  "http://" . $this->proxy->host . ":" . $this->proxy->port
+//            'proxy'     =>  "http://" . $this->proxy->host . ":" . $this->proxy->port
         ]);
 
         foreach($this->channels AS $channel) {

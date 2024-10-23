@@ -20,4 +20,5 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'callback'], function () {
     Route::post('/test', [WebhookHandleController::class, 'parseAdStats'])->name('callback.index');
+    Route::post('/posts', [WebhookHandleController::class, 'channelPosts']);
 });
