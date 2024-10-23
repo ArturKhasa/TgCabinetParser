@@ -11,7 +11,7 @@ class TelegramParsePosts extends Command
 
     public function handle(): void
     {
-        $channelIds = Channel::query()->whereNotNull("username")->get()->pluck("id")->toArray();
+        $channelIds = Channel::query()->whereNotNull("username")->limit(50)->get()->pluck("id")->toArray();
 
         $this->info(count($channelIds));
         $lastCount = 0;
