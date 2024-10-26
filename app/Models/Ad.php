@@ -95,33 +95,38 @@ class Ad extends Model
         return $this->hasMany(AdStatMinute::class);
     }
 
-//    public function channels(){
-//        return $this->belongsToMany(Channel::class, 'ad_channels')->using(AdChannel::class);
-//    }
+    public function channels()
+    {
+        return $this->belongsToMany(Channel::class, 'ad_channels')->using(AdChannel::class);
+    }
 //
 //    /*
 //     * User Targets Start
 //     */
 //
-//    public function countries(){
-//        return $this->belongsToMany(TargetCountry::class, 'ad_target_countries', 'ad_id', 'target_country_id')->using(AdTargetCountry::class);
-//    }
+    public function countries()
+    {
+        return $this->belongsToMany(TargetCountry::class, 'ad_target_countries', 'ad_id', 'target_country_id')->using(AdTargetCountry::class);
+    }
 
-//    public function locations(){
-//        return $this->belongsToMany(TargetLocation::class, 'ad_target_locations', 'ad_id', 'target_location_id')->using(AdTargetLocation::class);
-//    }
+    public function locations()
+    {
+        return $this->belongsToMany(TargetLocation::class, 'ad_target_locations', 'ad_id', 'target_location_id')->using(AdTargetLocation::class);
+    }
 //
-//    public function userLanguage(){
-//        return $this->belongsToMany(Language::class, 'ad_user_languages', 'ad_id', 'lang_id')->using(AdUserLanguage::class);
-//    }
-//
-//    public function userTopics(){
-//        return $this->belongsToMany(Topic::class, 'ad_user_topics', 'ad_id', 'topic_id')->using(AdUserTopic::class);
-//    }
+    public function userLanguage()
+    {
+        return $this->belongsToMany(Language::class, 'ad_user_languages', 'ad_id', 'lang_id')->using(AdUserLanguage::class);
+    }
+    public function userTopics()
+    {
+        return $this->belongsToMany(Topic::class, 'ad_user_topics', 'ad_id', 'topic_id')->using(AdUserTopic::class);
+    }
 
-//    public function userExcludeTopics(){
-//        return $this->belongsToMany(Topic::class, 'ad_exclude_user_topics', 'ad_id', 'topic_id')->using(AdExcludeUserTopic::class);
-//    }
+    public function userExcludeTopics()
+    {
+        return $this->belongsToMany(Topic::class, 'ad_exclude_user_topics', 'ad_id', 'topic_id')->using(AdExcludeUserTopic::class);
+    }
 //
 //    public function userAudiences(){
 //        return $this->belongsToMany(CabinetAudience::class, 'ad_user_audiences', 'ad_id', 'audience_id')->using(AdUserAudience::class);
@@ -131,17 +136,20 @@ class Ad extends Model
 //        return $this->belongsToMany(CabinetAudience::class, 'ad_exclude_user_audiences', 'ad_id', 'audience_id')->using(AdExcludeUserAudience::class);
 //    }
 
-//    public function userChannels(){
-//        return $this->belongsToMany(Channel::class, 'ad_user_channel_audiences')->using(AdUserChannelAudience::class);
-//    }
+    public function userChannels()
+    {
+        return $this->belongsToMany(Channel::class, 'ad_user_channel_audiences')->using(AdUserChannelAudience::class);
+    }
 //
-//    public function excludeUserChannels(){
-//        return $this->belongsToMany(Channel::class, 'ad_exclude_user_channel_audiences')->using(AdExcludeUserChannelAudience::class);
-//    }
+    public function excludeUserChannels()
+    {
+        return $this->belongsToMany(Channel::class, 'ad_exclude_user_channel_audiences')->using(AdExcludeUserChannelAudience::class);
+    }
 //
-//    public function userDevices(){
-//        return $this->belongsToMany(Device::class, "ad_user_devices")->using(AdUserDevice::class);
-//    }
+    public function userDevices()
+    {
+        return $this->belongsToMany(Device::class, "ad_user_devices")->using(AdUserDevice::class);
+    }
 
     /*
      * User Targets Finish
@@ -169,21 +177,24 @@ class Ad extends Model
 //        return $this->belongsToMany(Topic::class, 'ad_exclude_topic', 'ad_id', 'topic_id');
 //    }
 
-//    public function excludeChannels(){
-//        return $this->belongsToMany(Channel::class, 'ad_exclude_channels')->using(AdExcludeChannel::class);
-//    }
+    public function excludeChannels()
+    {
+        return $this->belongsToMany(Channel::class, 'ad_exclude_channels')->using(AdExcludeChannel::class);
+    }
 
-//    public function languages(){
-//        return $this->belongsToMany(Language::class, 'ad_language', 'ad_id', 'lang_id')->using(AdLanguage::class);
-//    }
+    public function languages()
+    {
+        return $this->belongsToMany(Language::class, 'ad_language', 'ad_id', 'lang_id')->using(AdLanguage::class);
+    }
 
-//    public function topics(){
-//        return $this->belongsToMany(Topic::class, 'ad_topic', 'ad_id', 'topic_id')->using(AdTopic::class);
-//    }
-//
-//    public function excludeTopics(){
-//        return $this->belongsToMany(Topic::class, 'ad_exclude_topic', 'ad_id', 'topic_id')->using(AdExcludeTopic::class);
-//    }
+    public function topics()
+    {
+        return $this->belongsToMany(Topic::class, 'ad_topic', 'ad_id', 'topic_id')->using(AdTopic::class);
+    }
+
+    public function excludeTopics(){
+        return $this->belongsToMany(Topic::class, 'ad_exclude_topic', 'ad_id', 'topic_id')->using(AdExcludeTopic::class);
+    }
 //
 //    public function company(){
 //        return $this->belongsTo(Company::class);
