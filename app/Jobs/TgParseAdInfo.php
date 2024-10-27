@@ -132,7 +132,7 @@ class TgParseAdInfo implements ShouldQueue
         $this->ad->schedule = $scheduleService->getSerializedScheduleFrom($this->dom->find('[name="schedule"]', 0)->value);
         $timeZoneValue = $this->dom->find('[name="schedule_tz"]', 0)->value;
         $this->ad->timezone_id = Timezone::where("value", $timeZoneValue)->first()?->id;
-        $this->ad->timezone_custom = $this->dom->find('[name="schedule_tz_custom"]', 0)->value;
+        $this->ad->is_timezone_custom = $this->dom->find('[name="schedule_tz_custom"]', 0)->value;
 
         if($trg_type == 'user')
         {

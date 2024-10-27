@@ -28,7 +28,7 @@ class Ad extends Model
         "use_schedule",
         "schedule",
         "timezone_id",
-        "timezone_custom"
+        "is_timezone_custom"
     ];
 
     protected $hidden = [
