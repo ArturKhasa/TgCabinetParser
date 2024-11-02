@@ -147,8 +147,8 @@ class TgParseAdInfo implements ShouldQueue
 
             $device = $this->getDeviceIdentity();
 
-            $this->ad->intersect_topics = $this->checkboxIsChecked("intersect_topics");
-            $this->ad->exclude_politic = $this->checkboxIsChecked("exclude_politic");
+//            $this->ad->intersect_topics = $this->checkboxIsChecked("intersect_topics");
+//            $this->ad->exclude_politic = $this->checkboxIsChecked("exclude_politic");
 
             if(count($targetCountryCodes))
             {
