@@ -225,6 +225,19 @@ class TgParseAdInfo implements ShouldQueue
         $this->ad->website_name = $ad_website_name;
         $this->ad->save();
 
+        $mediaIfExist = $this->dom->find('[name="media"]')[0]?->value;
+
+        if ($mediaIfExist) {
+            $dataPreview = $adHtml["s"]["previewData"]["media"];
+
+            preg_match("#background\-image\:url\(\'(.*)\'\)#", $dataPreview, $tgMediaUrl);
+
+            $this->ad->files()->firstOrCreate([
+                "filepath"     => $tgMediaUrl[1],
+                "media" => $mediaIfExist
+            ]);
+        }
+
         event(new TgParseAdUpdated($this->ad));
     }
 

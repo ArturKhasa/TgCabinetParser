@@ -104,6 +104,11 @@ class Ad extends Model
 //     * User Targets Start
 //     */
 //
+
+    public function files()
+    {
+        return $this->hasMany(AdFile::class);
+    }
     public function countries()
     {
         return $this->belongsToMany(TargetCountry::class, 'ad_target_countries', 'ad_id', 'target_country_id')->using(AdTargetCountry::class);
