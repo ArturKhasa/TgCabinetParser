@@ -153,6 +153,9 @@ trait TelegramProvider
     public function tgAd($id){
         return $this->tgRequest("get", "account/ad/{$id}")->json()["h"];
     }
+    public function tgAdAll($id){
+        return $this->tgRequest("get", "account/ad/{$id}")->json();
+    }
 
     public function hasTgAd($id): bool
     {

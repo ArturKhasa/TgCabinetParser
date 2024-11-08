@@ -114,8 +114,8 @@ class TgParseAdInfo implements ShouldQueue
      */
     public function handle(): void
     {
-        $adHtml = $this->cabinet->tgAd($this->ad->external_ad_id);
-        $this->dom->loadStr($adHtml);
+        $adHtml = $this->cabinet->tgAdAll($this->ad->external_ad_id);
+        $this->dom->loadStr($adHtml["h"]);
 
         $trg_type = $this->getTargetType();
 
