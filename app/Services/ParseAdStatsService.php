@@ -160,7 +160,7 @@ class ParseAdStatsService
         $websiteName = $cleanString(strip_tags($adWebsiteNameHtml->innerHtml));
 
         $ad->update([
-//            "text"          =>  $text,
+            "text"          =>  $text,
             "promote_url"  => $link,
             "website_name" => $websiteName
         ]);

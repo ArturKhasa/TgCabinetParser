@@ -114,8 +114,8 @@ class TgParseAdInfo implements ShouldQueue
      */
     public function handle(): void
     {
-        $adHtml = $this->cabinet->tgAd($this->ad->external_ad_id);
-        $this->dom->loadStr($adHtml);
+        $adHtml = $this->cabinet->tgAdAll($this->ad->external_ad_id);
+        $this->dom->loadStr($adHtml["h"]);
 
         $trg_type = $this->getTargetType();
 
@@ -132,7 +132,7 @@ class TgParseAdInfo implements ShouldQueue
         $this->ad->schedule = $scheduleService->getSerializedScheduleFrom($this->dom->find('[name="schedule"]', 0)->value);
         $timeZoneValue = $this->dom->find('[name="schedule_tz"]', 0)->value;
         $this->ad->timezone_id = Timezone::where("value", $timeZoneValue)->first()?->id;
-        $this->ad->timezone_custom = $this->dom->find('[name="schedule_tz_custom"]', 0)->value;
+        $this->ad->is_timezone_custom = $this->dom->find('[name="schedule_tz_custom"]', 0)->value;
 
         if($trg_type == 'user')
         {
@@ -147,8 +147,8 @@ class TgParseAdInfo implements ShouldQueue
 
             $device = $this->getDeviceIdentity();
 
-            $this->ad->intersect_topics = $this->checkboxIsChecked("intersect_topics");
-            $this->ad->exclude_politic = $this->checkboxIsChecked("exclude_politic");
+//            $this->ad->intersect_topics = $this->checkboxIsChecked("intersect_topics");
+//            $this->ad->exclude_politic = $this->checkboxIsChecked("exclude_politic");
 
             if(count($targetCountryCodes))
             {
@@ -224,6 +224,19 @@ class TgParseAdInfo implements ShouldQueue
         $this->ad->text = $ad_text;
         $this->ad->website_name = $ad_website_name;
         $this->ad->save();
+
+        $mediaIfExist = $this->dom->find('[name="media"]')[0]?->value;
+
+        if ($mediaIfExist) {
+            $dataPreview = $adHtml["s"]["previewData"]["media"];
+
+            preg_match("#background\-image\:url\(\'(.*)\'\)#", $dataPreview, $tgMediaUrl);
+
+            $this->ad->files()->firstOrCreate([
+                "filepath"     => $tgMediaUrl[1],
+                "media" => $mediaIfExist
+            ]);
+        }
 
         event(new TgParseAdUpdated($this->ad));
     }
