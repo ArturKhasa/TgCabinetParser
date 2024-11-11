@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(ParseAds::class)->everyFiveMinutes();
 //        $schedule->job(new TelegramParsePosts)->hourly();
-//        $schedule->command(Commands\TelegramParsePosts::class)->hourly();
+        $schedule->command(Commands\TelegramParsePosts::class)->hourly();
     }
 
     /**
