@@ -232,10 +232,12 @@ class TgParseAdInfo implements ShouldQueue
 
             preg_match("#background\-image\:url\(\'(.*)\'\)#", $dataPreview, $tgMediaUrl);
 
-            $this->ad->files()->firstOrCreate([
-                "filepath"     => $tgMediaUrl[1],
-                "media" => $mediaIfExist
-            ]);
+            if(isset($tgMediaUrl[1])){
+                $this->ad->files()->firstOrCreate([
+                    "filepath"     => $tgMediaUrl[1],
+                    "media" => $mediaIfExist
+                ]);
+            }
         }
 
         event(new TgParseAdUpdated($this->ad));
