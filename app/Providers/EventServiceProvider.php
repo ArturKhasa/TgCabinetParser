@@ -27,7 +27,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         TgParseAdUpdated::class => [
 //            TgParseAdCreatedListener::class,
-            AdOrdSignup::class
+//            AdOrdSignup::class
         ]
     ];
 

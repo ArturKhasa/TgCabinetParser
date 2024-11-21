@@ -135,88 +135,207 @@ class ParseAdStatsService
         )->timestamp;
     }
 
-    private function partTgAdStat($ad)
-    {
-        $tgAdStatAll = $this->cabinet->tgStatsAll($ad->external_ad_id);
-        $tgAdStat = $tgAdStatAll["j"];
+//    private function partTgAdStat($ad)
+//    {
+//        $tgAdStatAll = $this->cabinet->tgStatsAll($ad->external_ad_id);
+//        $tgAdStat = $tgAdStatAll["j"];
+//
+//        $cleanString = function ($string) {
+//            $search = array('&#8234;', '&lrm;', '&#8236;');
+//            $replace = array('', '', '');
+//
+//            return str_replace($search, $replace, $string);
+//        };
+//
+//        $dom = new Dom;
+//        $dom->loadStr($tgAdStatAll["h"]);
+//        $adTextHtml = $dom->find('.ad-msg-text')[0];
+//        $text = $cleanString(strip_tags($adTextHtml->innerHtml));
+//
+//        $adLink = $dom->find(".ad-msg-btn")[0];
+//        $link = $adLink->getAttribute("href");
+//        $link = str_replace("&amp;", "&", $link);
+//
+//        $adWebsiteNameHtml = $dom->find('.ad-msg-from')[0];
+//        $websiteName = $cleanString(strip_tags($adWebsiteNameHtml->innerHtml));
+//
+//        $ad->update([
+//            "text"          =>  $text,
+//            "promote_url"  => $link,
+//            "website_name" => $websiteName
+//        ]);
+//
+//        preg_match('#chart_count_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $joins);
+//        preg_match('#chart_budget_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $spent);
+//
+//        if (isset($joins[1])) {
+//            $stat = json_decode($joins[1], true);
+//            $statSpent = json_decode($spent[1], true);
+//
+//            $i = 0;
+//            $lastI = count($stat["columns"][0]) - 1;
+//            $timestamp = $stat["columns"][0][$lastI];
+//
+//            if ($timestamp && is_int($timestamp)) {
+//                $s_spent = $statSpent["columns"][1][$lastI];
+//                $date = Carbon::parse($timestamp / 1000)->format("Y-m-d");
+//                $dataToSave = [
+//                    "views"  => $stat["columns"][1][$lastI] ?? 0,
+//                    "clicks" => $stat["columns"][2][$lastI] ?? 0,
+//                    "joins"  => $stat["columns"][3][$lastI] ?? 0,
+//                    "spent"  => $s_spent > 0 ? (float)$s_spent / 1000000 : 0
+//                ];
+//
+//                $ad->stats()->updateOrCreate(
+//                    ["date" => $date],
+//                    $dataToSave
+//                );
+//            }
+//        }
+//        event(new TgParseAdUpdated($ad));
+//    }
 
-        $cleanString = function ($string) {
-            $search = array('&#8234;', '&lrm;', '&#8236;');
-            $replace = array('', '', '');
-
-            return str_replace($search, $replace, $string);
-        };
-
-        $dom = new Dom;
-        $dom->loadStr($tgAdStatAll["h"]);
-        $adTextHtml = $dom->find('.ad-msg-text')[0];
-        $text = $cleanString(strip_tags($adTextHtml->innerHtml));
-
-        $adLink = $dom->find(".ad-msg-btn")[0];
-        $link = $adLink->getAttribute("href");
-        $link = str_replace("&amp;", "&", $link);
-
-        $adWebsiteNameHtml = $dom->find('.ad-msg-from')[0];
-        $websiteName = $cleanString(strip_tags($adWebsiteNameHtml->innerHtml));
-
-        $ad->update([
-            "text"          =>  $text,
-            "promote_url"  => $link,
-            "website_name" => $websiteName
-        ]);
+    private function partTgAdStat($ad){
+        $tgAdStat = $this->cabinet->tgStats($ad->external_ad_id);
 
         preg_match('#chart_count_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $joins);
         preg_match('#chart_budget_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $spent);
 
-        if (isset($joins[1])) {
+        if(isset($joins[1])) {
             $stat = json_decode($joins[1], true);
             $statSpent = json_decode($spent[1], true);
 
-            $i = 0;
+            $i = 1;
             $lastI = count($stat["columns"][0]) - 1;
             $timestamp = $stat["columns"][0][$lastI];
 
             if ($timestamp && is_int($timestamp)) {
                 $s_spent = $statSpent["columns"][1][$lastI];
                 $date = Carbon::parse($timestamp / 1000)->format("Y-m-d");
+
                 $dataToSave = [
-                    "views"  => $stat["columns"][1][$lastI] ?? 0,
-                    "clicks" => $stat["columns"][2][$lastI] ?? 0,
-                    "joins"  => $stat["columns"][3][$lastI] ?? 0,
-                    "spent"  => $s_spent > 0 ? (float)$s_spent / 1000000 : 0
+                    "views" => 0,
+                    "clicks" => 0,
+                    "joins" => 0,
+                    "spent" => $s_spent > 0 ? (float)$s_spent / 1000000 : 0
                 ];
 
-                $ad->stats()->updateOrCreate(
+                $viewKey = null;
+                $clickKey = null;
+                $joinKey = null;
+
+                foreach ($stat["names"] as $fieldKey => $fieldName) {
+                    if ($fieldName === 'Views') {
+                        $viewKey = $fieldKey;
+                    } elseif ($fieldName === 'Clicks') {
+                        $clickKey = $fieldKey;
+                    } elseif ($fieldName === 'Joined' || $fieldName === 'Started bot' || $fieldName === 'Launched app' || $fieldName === 'Message Sent') {
+                        $joinKey = $fieldKey;
+                    }
+                }
+
+
+                foreach ($stat["columns"] as $column) {
+                    if ($column[0] === $viewKey) {
+                        // Извлекаем данные для Views
+                        $dataToSave['views'] = $column[$lastI] ?? 0;
+                    } elseif ($column[0] === $clickKey) {
+                        // Извлекаем данные для Clicks
+                        $dataToSave['clicks'] = $column[$lastI] ?? 0;
+                    } elseif ($column[0] === $joinKey) {
+                        // Извлекаем данные для Joins (если они есть)
+                        $dataToSave['joins'] = $column[$lastI] ?? 0;
+                    }
+                }
+
+
+                $adStat = $ad->stats()->updateOrCreate(
                     ["date" => $date],
                     $dataToSave
                 );
             }
         }
-        event(new TgParseAdUpdated($ad));
     }
 
-    private function fullTgAdStat($ad)
-    {
+//    private function fullTgAdStat($ad)
+//    {
+//        $tgAdStat = $this->cabinet->tgStats($ad->external_ad_id);
+//        preg_match('#chart_count_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $joins);
+//        preg_match('#chart_budget_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $spent);
+//
+//        if (isset($joins[1])) {
+//            $stat = json_decode($joins[1], true);
+//            $statSpent = json_decode($spent[1], true);
+//            $i = 0;
+//            foreach ($stat["columns"][0] as $timestamp) {
+//                if (is_int($timestamp)) {
+//                    $s_spent = $statSpent["columns"][1][$i];
+//                    $date = Carbon::parse($timestamp / 1000)->format("Y-m-d");
+//                    $adStat = $ad->stats()->updateOrCreate(
+//                        ["date" => $date],
+//                        [
+//                            "views"  => $stat["columns"][1][$i] ?? 0,
+//                            "clicks" => $stat["columns"][2][$i] ?? 0,
+//                            "joins"  => $stat["columns"][3][$i] ?? 0,
+//                            "spent"  => $s_spent > 0 ? (float)$s_spent / 1000000 : 0
+//                        ]
+//                    );
+//                }
+//                $i++;
+//            }
+//        }
+//    }
+    private function fullTgAdStat($ad, $views = 0): void {
         $tgAdStat = $this->cabinet->tgStats($ad->external_ad_id);
         preg_match('#chart_count_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $joins);
         preg_match('#chart_budget_stats_wrap\'\, (.*)\, true\)\;#isU', $tgAdStat, $spent);
 
-        if (isset($joins[1])) {
+        if(isset($joins[1])) {
             $stat = json_decode($joins[1], true);
             $statSpent = json_decode($spent[1], true);
             $i = 0;
-            foreach ($stat["columns"][0] as $timestamp) {
-                if (is_int($timestamp)) {
+
+            foreach($stat["columns"][0] AS $timestamp) {
+                if(is_int($timestamp)) {
                     $s_spent = $statSpent["columns"][1][$i];
                     $date = Carbon::parse($timestamp / 1000)->format("Y-m-d");
+                    $dataToSave = [
+                        "views" => 0,
+                        "clicks" => 0,
+                        "joins" => 0,
+                        "spent" => $s_spent > 0 ? (float)$s_spent / 1000000 : 0
+                    ];
+
+                    $viewKey = null;
+                    $clickKey = null;
+                    $joinKey = null;
+
+                    foreach ($stat["names"] as $fieldKey => $fieldName) {
+                        if ($fieldName === 'Views') {
+                            $viewKey = $fieldKey;
+                        } elseif ($fieldName === 'Clicks') {
+                            $clickKey = $fieldKey;
+                        } elseif ($fieldName === 'Joined' || $fieldName === 'Started bot' || $fieldName === 'Launched app' || $fieldName === 'Message Sent') {
+                            $joinKey = $fieldKey;
+                        }
+                    }
+
+                    foreach ($stat["columns"] as $column) {
+                        if ($column[0] === $viewKey) {
+                            // Извлекаем данные для Views
+                            $dataToSave['views'] = $column[$i] ?? 0;
+                        } elseif ($column[0] === $clickKey) {
+                            // Извлекаем данные для Clicks
+                            $dataToSave['clicks'] = $column[$i] ?? 0;
+                        } elseif ($column[0] === $joinKey) {
+                            // Извлекаем данные для Joins (если они есть)
+                            $dataToSave['joins'] = $column[$i] ?? 0;
+                        }
+                    }
+
                     $adStat = $ad->stats()->updateOrCreate(
                         ["date" => $date],
-                        [
-                            "views"  => $stat["columns"][1][$i] ?? 0,
-                            "clicks" => $stat["columns"][2][$i] ?? 0,
-                            "joins"  => $stat["columns"][3][$i] ?? 0,
-                            "spent"  => $s_spent > 0 ? (float)$s_spent / 1000000 : 0
-                        ]
+                        $dataToSave
                     );
                 }
                 $i++;
