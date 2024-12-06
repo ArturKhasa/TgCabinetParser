@@ -121,6 +121,7 @@ class TgParseAdInfo implements ShouldQueue
 
         $adTextElement = $this->dom->find('#ad_text')[0] ?? null;
         $ad_text = $adTextElement ? $adTextElement->text : '';
+        $ad_text = str_replace('&#33;','!',$ad_text);
         $ad_website_name = $this->dom->find('#ad_website_name')[0]?->value;
 
         $this->ad->picture = $this->checkboxIsChecked("picture");
